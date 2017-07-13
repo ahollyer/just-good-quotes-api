@@ -1,0 +1,45 @@
+{{! After form submission }}
+{{# if req.body.submitted}}
+  <h2>You entered:</h2>
+  Quote Text: {{req.body.quote}}<br>
+  Author: {{req.body.authorId}}<br>
+  Category Tags:
+    <ul>
+
+    </ul>
+  <h2>Thanks for submitting! Submit again below?</h2>
+{{/if}}
+
+{{! Form }}
+<div class="col-md-10 col-md-offset-2">
+  <h1>{{title}}</h1>
+  <br>
+  <form action="/add_quote" method="POST">
+    <div class="form-group">
+      <input type="hidden" name="submitted" value=true>
+
+      <label>Quote Text<br><em>(do not enclose in quotation marks):</em></label><br>
+      <textarea rows="4" cols="50" name="quote"></textarea>
+      <br><br>
+
+      <label>Author</label><br>
+      {{#each author}}
+        <input type="radio" name="authorId" required value={{this.id}}> {{this.name}}<br>
+      {{/each}}
+      <br><br>
+
+      <label>Categories</label><br>
+      {{#each category}}
+        <input type="checkbox" name="category" value={{this.id}}> {{this.name}}<br>
+      {{/each}}
+      <br>
+      <input type="text" name="addCategory">
+      <p class="help-block">Add a new category</p>
+      <br><br>
+
+      <button class="btn btn-primary" type="submit">Submit</button>
+    </div>
+  </form>
+
+  <a href="/">Nevermind, take me home</a>
+</div>
