@@ -26,7 +26,7 @@ Hopefully, this project meets your needs if your needs are for tasty, bite-sized
 
 - [ ] Users can retrieve a random quote from the API.
 - [ ] Users can retrieve quotes by author and/or category.
-- [ ] The database contains at least 250 quality quotes from a variety of sources.
+- [ ] The database contains at least 200 quality quotes from a variety of sources.
 
 -----
 
