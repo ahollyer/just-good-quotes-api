@@ -1,4 +1,3 @@
-'use strict';
 const express = require('express');
 const app = express();
 const body_parser = require('body-parser');
@@ -39,31 +38,36 @@ app.use('/static', express.static('public'));
 // });
 
 
-/********************************* Routes ***********************************/
+/****************************** API Routes **********************************/
 app.get('/', function(req, res) {
-  res.json(
-    {message: 'This is an API Chump!'}
-  );
+  const randomQuery = "SELECT text FROM quote ORDER BY RANDOM() LIMIT 1";
+  db.one(randomQuery)
+  .then(queryResult => {
+    res.json(
+      {quote: `${queryResult.text}`}
+    );
+  })
 });
 
-/*************************** Databse Update Form ***************************/
+/*************************** Database Update Form ***************************/
 
-  ///////////////////////////////////////////////////////////////////
- // Generate quote form, pulling most recent values from database //
-///////////////////////////////////////////////////////////////////
-function addQuote(req, res) {
+  ///////////////////////////////////////////////////////////////////////////
+ // On GET, generate quote form, pulling most recent values from database //
+///////////////////////////////////////////////////////////////////////////
+function getFormData(req, res) {
+  const authorQuery = "SELECT name, id FROM author ORDER BY name ASC";
+  const catQuery = "SELECT name, id FROM category ORDER BY name ASC";
+
   let queryResults = [];
   queryResults.push(req);
 
   // Query for author, push to output array
-  const authorQuery = "SELECT name, id FROM author ORDER BY name ASC";
   db.query(authorQuery)
   .then(authorResults => {
     queryResults.push(authorResults);
   })
   .then(function() {
-    //Query for category, push to output array
-    const catQuery = "SELECT name, id FROM category ORDER BY name ASC";
+    // Query for category, push to output array
     return db.query(catQuery);
   })
   .then(catResults => {
@@ -80,59 +84,105 @@ function addQuote(req, res) {
   })
 }
 
-  /////////////////////////////////
- // Database update form routes //
-/////////////////////////////////
+  ///////////////////////////////////////////////////////////////
+ // On POST, read form input and update database accordingly. //
+///////////////////////////////////////////////////////////////
+function insertQuote(req, res) {
+
+  const quoteInsert = `INSERT INTO quote (text, author_id) \
+    VALUES ('${req.body.quote}', ${req.body.authorId});`;
+  db.query(quoteInsert)
+  // Get the newly added quote ID
+  .then(function(){
+    const quoteLookUp = 'SELECT id FROM quote ORDER BY id DESC LIMIT 1;';
+    return db.query(quoteLookUp);
+  })
+  // If there are any checked categories, insert them in the xref table
+  .then(function(quoteId){
+    if(req.body.category) {
+      for (let i = 0; i < req.body.category.length; i++) {
+        const quoteCatInsert = `INSERT INTO quotecategory (quote_id, category_id) \
+          VALUES (${quoteId[0].id}, ${req.body.category[i]});`;
+        db.query(quoteCatInsert)
+      }
+    }
+    return quoteId;
+  })
+  .then(function(quoteId){
+    // Add new category if needed
+    if(req.body.newCategory === "") {
+    }
+    else {
+      req.body.newCategory = req.body.newCategory.replace(/'/g,"''");
+      const catInsert = `INSERT INTO category (name) \
+        VALUES ('${req.body.newCategory}')`;
+      db.query(catInsert)
+      // Get ID of newly added category
+      .then(function(){
+        const catLookUp = `SELECT id FROM category ORDER BY id DESC LIMIT 1;`;
+        return db.query(catLookUp)
+      })
+      // Insert new category ID in xref table
+      .then(function(catId){
+        const newQuoteCatInsert = `INSERT INTO quotecategory \
+        (quote_id, category_id) \
+        VALUES (${quoteId[0].id}, ${catId[0].id})`;
+        db.query(newQuoteCatInsert)
+    })}
+    return quoteId;
+  })
+  .then(function(){
+    getFormData(req, res);
+  })
+  .catch(err => {
+    console.error(err.stack);
+  });
+}
+
+
+  ///////////////////////////////////
+ // Routes - database update form //
+///////////////////////////////////
 app.get('/add_quote/', function(req, res) {
-  addQuote(req, res);
+  getFormData(req, res);
 })
 
 app.post('/add_quote/', function(req, res, next) {
   req.body.quote = req.body.quote.replace(/'/g,"''");
-  function insertQuote(req, res) {
-    // Add one to one values in the quote table
-    db.query(`INSERT INTO quote (text, author_id) \
-      VALUES ('${req.body.quote}', ${req.body.authorId});`)
-    // Get the newly added quote ID
-    .then(function(){
-      return db.query('SELECT id FROM quote ORDER BY id DESC LIMIT 1;');
+
+     //////////////////////////////////////////////////////////////////////////
+    // If form input includes a new author, update the database accordingly //
+   //  before inserting the new quote.                                     //
+  //////////////////////////////////////////////////////////////////////////
+  if(req.body.newAuthor !== "") {
+    req.body.newAuthor = req.body.newAuthor.replace(/'/g,"''");
+
+    const authorInsert = `INSERT INTO author (name) VALUES \
+    ('${req.body.newAuthor}');`;
+    const authorLookUp = 'SELECT id FROM author ORDER BY id DESC LIMIT 1;'
+
+    // Insert the author into the database
+    db.query(authorInsert)
+    .then(function() {
+      return db.query(authorLookUp);
     })
-    // If there are any checked categories, insert them here in xref table
-    .then(function(quoteId){
-      if(req.body.category) {
-        for (let i = 0; i < req.body.category.length; i++) {
-          db.query(`INSERT INTO quotecategory \
-            (quote_id, category_id) VALUES (${quoteId[0].id}, ${req.body.category[i]});`)
-        }
-      }
-      return quoteId;
+    // Update the request body to reflect the newly added author's ID
+    .then(queryResult => {
+      req.body.authorId = queryResult[0].id;
     })
-    .then(function(quoteId){
-      // Add new category if needed
-      if(req.body.addCategory==="") {
-      }
-      else {
-        req.body.addCategory = req.body.addCategory.replace(/'/g,"''");
-        db.query(`INSERT INTO category (name) VALUES ('${req.body.addCategory}')`)
-        // Get ID of newly added category
-        .then(function(){
-          return db.query(`SELECT id FROM category ORDER BY id DESC LIMIT 1;`)
-        })
-        // Insert new category ID in xref table with quote ID
-        .then(function(catId){
-          db.query(`INSERT INTO quotecategory (quote_id, category_id) \
-            VALUES (${quoteId[0].id}, ${catId[0].id})`)
-      })}
-      return quoteId;
-    })
-    .then(function(){
-      addQuote(req, res);
+    .then(function() {
+      insertQuote(req, res);
     })
     .catch(err => {
-      console.error(err);
+      console.error(err.stack);
     });
+   ////////////////////////////////////////////////////////////////
+  // Else if no new author, just add the quote to the database. //
+ ////////////////////////////////////////////////////////////////
+  } else {
+    insertQuote(req, res);
   }
-  insertQuote(req, res);
+
 });
 
 /**************************** Server ********************************/

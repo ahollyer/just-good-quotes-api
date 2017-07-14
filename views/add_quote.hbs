@@ -2,12 +2,7 @@
 {{# if req.body.submitted}}
   <h2>You entered:</h2>
   Quote Text: {{req.body.quote}}<br>
-  Author: {{req.body.authorId}}<br>
-  Category Tags:
-    <ul>
-
-    </ul>
-  <h2>Thanks for submitting! Submit again below?</h2>
+  <h2>Thanks for submitting! Submit again?</h2>
 {{/if}}
 
 {{! Form }}
@@ -24,8 +19,9 @@
 
       <label>Author</label><br>
       {{#each author}}
-        <input type="radio" name="authorId" required value={{this.id}}> {{this.name}}<br>
+        <input type="radio" name="authorId" value={{this.id}}> {{this.name}}<br>
       {{/each}}
+        <input type="text" name="newAuthor">
       <br><br>
 
       <label>Categories</label><br>
@@ -33,8 +29,8 @@
         <input type="checkbox" name="category" value={{this.id}}> {{this.name}}<br>
       {{/each}}
       <br>
-      <input type="text" name="addCategory">
-      <p class="help-block">Add a new category</p>
+      New Category:
+      <input type="text" name="newCategory">
       <br><br>
 
       <button class="btn btn-primary" type="submit">Submit</button>
