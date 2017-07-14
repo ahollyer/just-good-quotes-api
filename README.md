@@ -74,11 +74,12 @@ It was difficult figuring out how to chain promises together in order to update 
 
 
 #### Goals from Yesterday
-- [ ] get at least 100 quotes into the database
+- [x] get at least 100 quotes into the database
 - [ ] accept author and category parameters in the API request
 - [ ] deploy the database
 - [ ] deploy the server
 
 #### I learned . . .
+how to split code into modules in Node. It was pretty easy. I want to work on making my code more modular and organized. I'm definitely still at a stage where it's hard to think about a complex app at a high level and organize the code into meaningful, self-contained sections. But I see the value in modular programming and want to continue reading, practicing, and getting better at it.
 
 #### Goals for Tomorrow
