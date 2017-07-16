@@ -10,7 +10,7 @@ const update_db = require('./update_db');
 /************************ Database Configuration ***************************/
 const db = pgp(process.env.DATABASE || {
   host: 'localhost',
-  port: 5432,
+  port: 9005,
   database: 'Quotes',
   user: 'postgres',
 });
