@@ -48,8 +48,8 @@ Today, I decided on a project, then brainstormed the MVP and stretch goals. I wa
 The form to update the database took several hours, but I learned a lot. It was important to me to use a SQL database for this project, because I really want to work on mastering SQL basics. Writing the queries and insert statements for the form was good practice. An example:
 
 ```javascript
-const newQuoteCatInsert = `INSERT INTO \
-quotecategory (quote_id, category_id) \
+const newQuoteCatInsert = `INSERT INTO
+quotecategory (quote_id, category_id) 
 VALUES (${quoteId[0].id}, ${catId[0].id})`;
 ```
 
