@@ -39,9 +39,14 @@ app.use('/static', express.static('public'));
 
 
 /****************************** API Routes **********************************/
+app.get('/', function(req, res) {
+  res.render('index.hbs')
+});
+
 app.get('/api/rand/:key', function(req, res) {
   const key = req.params.key;
   console.log('key: ' + key);
+  // Retrieves one random quote with author and categories
   const randomQuery = `SELECT a.name AS author,
                               qc.quote_id AS id,
                               q.text,
@@ -110,7 +115,7 @@ app.post('/add_quote/', function(req, res, next) {
 
 });
 
-/**************************** Server ********************************/
+/********************************* Server ************************************/
 const PORT = process.env.PORT || 9001;
 app.listen(9001, function() {
   console.log(`Listening on port ${PORT}`);
