@@ -48,7 +48,7 @@ function queryConstructor(req, params) {
   let query = `SELECT a.name AS author,
                       qc.quote_id AS id,
                       q.text,
-                      c.name
+                      c.name AS category
               FROM quotecategory qc
               JOIN quote q ON qc.quote_id = q.id
               JOIN author a ON q.author_id = a.id
@@ -96,6 +96,7 @@ app.get('/api/:key', function(req, res, next) {
   let resultsArray = [];
   let params = {
     key: req.params.key,
+// TODO: Figure out how to return a specified number of quotes
     numQuotes: req.query.numQuotes || 1,
     random: req.query.random,
     author: req.query.author,
@@ -110,21 +111,20 @@ app.get('/api/:key', function(req, res, next) {
       return quote;
     });
     // Reduce the array to consolidate categories
-    console.log('The quotes array: ' + resultsArray);
-    let categories = quotes.map((category) => {
-      return category.name;
+    console.log('The quotes array: ' + quotesArray);
+    let categories = quotes.map(quote => {
+      return quote.category;
     });
 
-    // TODO: Allow multiple results, pushed to resultsArray
-
+// TODO: Allow multiple results, pushed to resultsArray
     // Return requested data to the client
-    res.json(
-      {
-        id: quotes[0].id,
-        quote: quotes[0].text,
-        author: quotes[0].author,
-        categories: categories
-      }
+    res.json(quotesArray
+      // {
+      //   id: quotes[0].id,
+      //   quote: quotes[0].text,
+      //   author: quotes[0].author,
+      //   categories: categories
+      // }
     );
   })
   .catch(err => {
