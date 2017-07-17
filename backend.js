@@ -136,7 +136,7 @@ app.get('/api/:key', function(req, res, next) {
     res.json(Array.from(combined.values()));
   })
   .catch(err => {
-    console.error(err.stack);
+    next(err);
   })
 });
 
