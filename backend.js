@@ -130,18 +130,10 @@ app.get('/api/:key', function(req, res, next) {
     });
     console.log('AFTER REDUCE: ' + combined);
 
-    // let categories = quotes.map(quote => {
-    //   return quote.category;
-    // });
 
 // TODO: Allow multiple results, pushed to a results array
 
-    // Return requested data to the client
-    var quotes = [];
-    combined.forEach(function (value, key) {
-      quotes.push(value);
-    });
-    res.json(quotes);
+    res.json(Array.from(combined.values()));
   })
   .catch(err => {
     console.error(err.stack);
