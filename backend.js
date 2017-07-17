@@ -60,7 +60,7 @@ function queryConstructor(req, params) {
     query += `WHERE qc.quote_id
               IN (SELECT id FROM quote
               ORDER BY RANDOM()
-              LIMIT 1);`;
+              LIMIT 20);`;
   }
     //////////////////////////////////////////////////
    // If author supplied, filter quotes by author. //
@@ -111,30 +111,29 @@ app.get('/api/:key', function(req, res, next) {
       return quote;
     });
     // Reduce the array to consolidate categories
-    // console.log('VALUE: ' + quotesArray[0].category);
-    // quotesArray.reduce(function(acc, cur) {
-    //   console.log(acc, cur);
-    //   if(acc.text === cur.text) {
-    //     acc.category += `,${cur.category}`;
-    //   }
-    // });
-    // console.log('AFTER REDUCE: ' + quotesArray[0].category);
+    console.log('VALUE: ' + quotesArray[0].category);
+    var combined = new Map();
+    quotesArray.map(function(q) {
+      let quote = combined.get(q.id);
+      if (quote) {
+        quote.categories.push(q.category);
+      } else {
+        q.categories = [];
+        combined.set(q.id, q);
+        quote = combined.get(q.id);
 
-    let categories = quotes.map(quote => {
-      return quote.category;
-    });
-
-// TODO: Allow multiple results, pushed to resultsArray
-    // Return requested data to the client
-    res.json(
-      // quotesArray
-      {
-        id: quotes[0].id,
-        quote: quotes[0].text,
-        author: quotes[0].author,
-        categories: categories
+        if (q.category) {
+          quote.categories.push(q.category);
+          delete quote.category;
+        }
       }
-    );
+    });
+    console.log('AFTER REDUCE: ' + combined);
+
+
+// TODO: Allow multiple results, pushed to a results array
+
+    res.json(Array.from(combined.values()));
   })
   .catch(err => {
     console.error(err.stack);
