@@ -10,7 +10,7 @@ const update_db = require('./update_db');
 /************************ Database Configuration ***************************/
 const db = pgp(process.env.DATABASE || {
   host: 'localhost',
-  port: 9005,
+  port: 9004,
   database: 'Quotes',
   user: 'postgres',
 });
@@ -111,20 +111,29 @@ app.get('/api/:key', function(req, res, next) {
       return quote;
     });
     // Reduce the array to consolidate categories
-    console.log('The quotes array: ' + quotesArray);
+    // console.log('VALUE: ' + quotesArray[0].category);
+    // quotesArray.reduce(function(acc, cur) {
+    //   console.log(acc, cur);
+    //   if(acc.text === cur.text) {
+    //     acc.category += `,${cur.category}`;
+    //   }
+    // });
+    // console.log('AFTER REDUCE: ' + quotesArray[0].category);
+
     let categories = quotes.map(quote => {
       return quote.category;
     });
 
 // TODO: Allow multiple results, pushed to resultsArray
     // Return requested data to the client
-    res.json(quotesArray
-      // {
-      //   id: quotes[0].id,
-      //   quote: quotes[0].text,
-      //   author: quotes[0].author,
-      //   categories: categories
-      // }
+    res.json(
+      // quotesArray
+      {
+        id: quotes[0].id,
+        quote: quotes[0].text,
+        author: quotes[0].author,
+        categories: categories
+      }
     );
   })
   .catch(err => {
