@@ -8,7 +8,17 @@
 
 nav ul a,
 nav .brand-logo {
-  color: #444;
+  color: #f2f2f2;
+}
+
+.logo-img {
+  vertical-align: top;
+  margin-top: 3px;
+  height: 50px;
+  width: auto;
+  -ms-transform: rotate(6deg);
+  -webkit-transform: rotate(6deg);
+  transform: rotate(6deg);
 }
 
 p {
@@ -16,8 +26,10 @@ p {
 }
 
 .button-collapse {
-  color: #26a69a;
+  color: #f2f2f2;
 }
+
+
 
 .parallax-container {
   min-height: 380px;
@@ -28,11 +40,29 @@ p {
   .parallax-container .section {
     width: 100%;
   }
+  .parallax-container h1 {
+    font-weight: 500;
+    background: rgba(100, 100, 100, 0.6);
+  }
+  .parallax-container h5 {
+    margin-top: 50px;
+    background: rgba(100, 100, 100, 0.6);
+    line-height: 1.5;
+    text-shadow: 2px 2px #555;
+  }
+
+  #index-banner {
+    padding-top: 200px;
+    min-height: 100vh;
+  }
 
 @media only screen and (max-width : 992px) {
   .parallax-container .section {
     position: absolute;
     top: 40%;
+  }
+  #index-banner {
+    min-height: 50vh;
   }
   #index-banner .section {
     top: 10%;
