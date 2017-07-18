@@ -5,6 +5,7 @@
   "main": "backend.js",
   "dependencies": {
     "apikeygen": "^0.2.0",
+    "axios": "^0.16.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",

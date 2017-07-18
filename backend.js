@@ -1,13 +1,14 @@
 const express = require('express');
 const app = express();
-const body_parser = require('body-parser');
 const promise = require('bluebird');
-const pgp = require('pg-promise')({ promiseLib: promise });
+/************ API-Related **************/
+const body_parser = require('body-parser');
 const keygen = require("apikeygen").apikey;
-
+const axios = require('axios');
+/*********** DB-Related *************/
+const pgp = require('pg-promise')({ promiseLib: promise });
 const update_db = require('./update_db');
 const query_db = require('./query_db')
-
 
 /************************ Database Configuration ***************************/
 const db = pgp(process.env.DATABASE || {
@@ -26,7 +27,6 @@ const db = pgp(process.env.DATABASE || {
 //     });
 // });
 
-
 /************************** App Configuration *******************************/
 app.set('view engine', 'hbs');
 app.use(body_parser.urlencoded({extended: false}));
@@ -42,7 +42,7 @@ app.use('/static', express.static('static'));
 const key = keygen();
 console.log(key);
 
-/****************************** API Routes **********************************/
+/****************************** App Routes **********************************/
 app.get('/', function(req, res) {
   res.render('index.hbs')
 });
