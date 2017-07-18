@@ -5,6 +5,7 @@ const promise = require('bluebird');
 const pgp = require('pg-promise')({ promiseLib: promise });
 
 const update_db = require('./update_db');
+const query_db = require('./query_db')
 
 
 /************************ Database Configuration ***************************/
@@ -43,97 +44,22 @@ app.get('/', function(req, res) {
   res.render('index.hbs')
 });
 
-function queryConstructor(req, params) {
-  // Create join table, select fields to be returned
-  let query = `SELECT a.name AS author,
-                      qc.quote_id AS id,
-                      q.text,
-                      c.name AS category
-              FROM quotecategory qc
-              JOIN quote q ON qc.quote_id = q.id
-              JOIN author a ON q.author_id = a.id
-              JOIN category c ON qc.category_id = c.id `;
-    /////////////////////////////////////////////////////////////
-   // If user specifies random, simply return a random quote. //
-  /////////////////////////////////////////////////////////////
-  if(params.random) {
-    query += `WHERE qc.quote_id
-              IN (SELECT id FROM quote
-              ORDER BY RANDOM()
-              LIMIT 20);`;
-  }
-    //////////////////////////////////////////////////
-   // If author supplied, filter quotes by author. //
-  //////////////////////////////////////////////////
-  if(req.query.author) {
-    // console.log('Author: ' + req.query.author);
-    params.author = req.query.author;
-    query += `WHERE a.name ILIKE '${params.author}'`;
-  }
-    //////////////////////////////////////////////////////
-   // If category supplied, filter quotes by category. //
-  //////////////////////////////////////////////////////
-  if(req.query.category) {
-    // Split categories string into an array.
-    params.category = req.query.category.split(',');
-    catsRemaining = params.category.length - 1;
-    // Iterate over the array, adding each category to the query string.
-    query += `WHERE c.name ILIKE `
-    params.category.forEach(term => {
-      query += `'${term}'`;
-      if(catsRemaining) {
-        query += ' OR ';
-        catsRemaining -= 1;
-      }
-    });
-  }
-
-  return query;
-}
-
-
 app.get('/api/:key', function(req, res, next) {
-  let resultsArray = [];
   let params = {
     key: req.params.key,
-// TODO: Figure out how to return a specified number of quotes
     numQuotes: req.query.numQuotes || 1,
     random: req.query.random,
     author: req.query.author,
     category: req.query.category
   }
 
-  db.query(queryConstructor(req, params))
+  db.query(query_db.constructQuery(req, params))
   .then(quotes => {
-    console.log(quotes);
-    // Map results of db.query to an array
-    let quotesArray = quotes.map(quote => {
-      return quote;
-    });
-    // Reduce the array to consolidate categories
-    console.log('VALUE: ' + quotesArray[0].category);
-    var combined = new Map();
-    quotesArray.map(function(q) {
-      let quote = combined.get(q.id);
-      if (quote) {
-        quote.categories.push(q.category);
-      } else {
-        q.categories = [];
-        combined.set(q.id, q);
-        quote = combined.get(q.id);
+    // If a quote has multiple categories, combine these into an array
+    // on a single quote object
+    let response = query_db.combineQueryResults(quotes, params);
 
-        if (q.category) {
-          quote.categories.push(q.category);
-          delete quote.category;
-        }
-      }
-    });
-    console.log('AFTER REDUCE: ' + combined);
-
-
-// TODO: Allow multiple results, pushed to a results array
-
-    res.json(Array.from(combined.values()));
+    res.json(response);
   })
   .catch(err => {
     next(err);
