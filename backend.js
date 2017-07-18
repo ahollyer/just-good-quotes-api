@@ -30,7 +30,7 @@ const db = pgp(process.env.DATABASE || {
 /************************** App Configuration *******************************/
 app.set('view engine', 'hbs');
 app.use(body_parser.urlencoded({extended: false}));
-app.use('/static', express.static('public'));
+app.use('/static', express.static('static'));
   ////////////////////////////////////////////////
  // Un-comment to log incoming client requests //
 ////////////////////////////////////////////////
@@ -56,6 +56,8 @@ app.get('/api/:key', function(req, res, next) {
     author: req.query.author,
     category: req.query.category
   }
+
+  const limitCheck = `SELECT id FROM users WHERE api_key = ${params.key}`;
 
   db.query(query_db.constructQuery(req, params))
   .then(quotes => {
