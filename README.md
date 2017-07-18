@@ -17,7 +17,7 @@ Hopefully, this project meets your needs if your needs are for tasty, bite-sized
 ### MVP (Minimum Viable Product)
 
 - [x] Users can retrieve a random quote from the API. **Done! 7/13**
-- [ ] Users can retrieve quotes by author and/or category.
+- [x] Users can retrieve quotes by author and category. **Done! 718**
 - [ ] The database contains at least 200 quality quotes from a variety of sources.
 
 -----
@@ -32,14 +32,15 @@ Hopefully, this project meets your needs if your needs are for tasty, bite-sized
 - [ ] Users can submit quote suggestions through a form on the website.
 - [ ] Users can view random quotes on the website.
 - [ ] Users can search for quotes on the website.
-- [ ] Add semantic search with Watson API.
+- [ ] Uses semantic search with Watson API.
 - [ ] Users can filter quotes on the website by author and category.
 - [ ] Users can click buttons to share quotes on social media from the website.
 - [ ] Users can npm install a separate package just for Tolkien quotes--because Lord of The Rings rocks.
+- [ ] Set up caching linked to api keys
 
 -----
-
-## Individual Project Week: July 13-20
+## Developer's Journal
+### Individual Project Week: July 13-20
 
 ### Thursday, July 13
 Today, I decided on a project, then brainstormed the MVP and stretch goals. I was able to build out a *really* basic working project that accepts a user request, pulls a random quote from the database, and sends it as a JSON response.
@@ -49,7 +50,7 @@ The form to update the database took several hours, but I learned a lot. It was 
 
 ```javascript
 const newQuoteCatInsert = `INSERT INTO
-quotecategory (quote_id, category_id) 
+quotecategory (quote_id, category_id)
 VALUES (${quoteId[0].id}, ${catId[0].id})`;
 ```
 
@@ -68,11 +69,24 @@ It was difficult figuring out how to chain promises together in order to update 
 
 #### Goals from Yesterday
 - [x] get at least 100 quotes into the database
-- [ ] accept author and category parameters in the API request
+- [x] accept author and category parameters in the API request
 - [x] deploy the app
-- [ ] deploy the database
+- [x] deploy the database
 
 #### I learned . . .
 how to split code into modules in Node. It was pretty easy. I want to work on making my code more modular and organized. I'm definitely still at a stage where it's hard to think about a complex app at a high level and organize the code into meaningful, self-contained sections. But I see the value in modular programming and want to continue reading, practicing, and getting better at it.
 
 #### Goals for Tomorrow
+
+---------
+
+### Tuesday, July 18
+Yikes! I got sidetracked by another project, creating a website for an upcoming hackathon. While I had a great time, it's unfortunate that I lost time on my individual project. Time to get back in the trenches!
+
+#### Goals for Today
+- [ ] get the database up to 150 quotes
+- [ ] create authentication system for users w/ API keys
+- [ ] build basic front end w/ sign up, log in system
+- [ ] keys will likely be used on front end--allow users to easily generate new keys
+- [ ] deploy again
+- [x] allow users to specify the max number of quotes they want returned on API requests

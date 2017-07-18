@@ -3,6 +3,7 @@ const app = express();
 const body_parser = require('body-parser');
 const promise = require('bluebird');
 const pgp = require('pg-promise')({ promiseLib: promise });
+const keygen = require("apikeygen").apikey;
 
 const update_db = require('./update_db');
 const query_db = require('./query_db')
@@ -38,12 +39,15 @@ app.use('/static', express.static('public'));
 //   next();
 // });
 
+const key = keygen();
+console.log(key);
 
 /****************************** API Routes **********************************/
 app.get('/', function(req, res) {
   res.render('index.hbs')
 });
 
+/****************************** API Routes **********************************/
 app.get('/api/:key', function(req, res, next) {
   let params = {
     key: req.params.key,
