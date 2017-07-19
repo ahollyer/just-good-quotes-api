@@ -1,21 +1,21 @@
 <body>
   <div class="container-fluid bg-1">
-      <h1>{{company.name}}</h1>
+      <h1>Account Details</h1>
       <p><a href="/changelogin/{{company.verify_key}}">Change Your Email Address  </a>|<a href="/changepass/{{company.verify_key}}">  Change Your Password</a></p>
-      <p>Active Keys: {{keys}}</p>
+      <p>Active Keys: {{numKeys}}</p>
   </div>
   <div class="container-fluid bg-2 text-center">
     {{#unless verified}}
     <div class="alert alert-danger text-center">
-      Please verify your account to view the console page.
-      <a href="/resend/?key={{company.verify_key}}&id={{company.id}}">Resend verification email?</a>
+      To proceed, please check your inbox and verify your account.
+      <a href="/resend/?key={{user.verify_key}}&id={{user.id}}">Resend verification email?</a>
     </div>
     {{/unless}}
     {{#if verified}}
       <form method='post'>
-        <label>Add new game:</label>
+        <label>Create an App:</label>
         <input type='text' name='name'>
-        <input type="hidden" value="{{id}}" name="game_id">
+        <input type="hidden" value="{{id}}" name="app_id">
         <input type='submit' class="btn btn-sm btn-primary" >
       </form>
    </div>
@@ -45,7 +45,7 @@
         {{#unless key_present}}
         <form method="POST" action="/console" name="new_api">
           <input type='hidden' name='api_key_generate' value='true'>
-          <input type='hidden' name='game_id' value='{{id}}'>
+          <input type='hidden' name='app_id' value='{{id}}'>
           <input type='submit' class="btn btn-sm btn-success-api"value='Generate API key'>
          </form>
          {{/unless}}
@@ -78,7 +78,7 @@
            <form method="POST" action="/console" name="delete_game">
              <input type='hidden' name='delete_game' value='true'>
              <input type="hidden" value="{{name}}" name="name">
-             <input type="hidden" value="{{id}}" name="game_id">
+             <input type="hidden" value="{{id}}" name="app_id">
              <input type="submit" class="btn btn-primary" value="DELETE GAME">
            </form>
          </div>

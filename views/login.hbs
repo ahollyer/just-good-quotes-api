@@ -1,99 +1,60 @@
-<form class="col s12 m6 offset-m3 z-depth-3" action="./" method="POST">
+<!-- TODO: Change to toasts -->
+<!-- Alerts -->
+{{#if fail}}<div class='alert alert-danger'>Email and password did not match. Please try again.</div>{{/if}}
+{{#if invalid}}<div class='alert alert-danger'>Sorry, that email is not in our database. Create an account <a href='/dev/register'>here.</a></div>{{/if}}
+<!--***********************************************************************
+                              Login Form
+************************************************************************-->
+<div class="container">
   <div class="row">
-    <br />
-    <div class="input-field col s10 offset-s1">
-      <input id="email" type="email" class="validate">
-      <label for="email">Email</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="input-field col s10 offset-s1">
-      <input id="password" type="password" class="validate">
-      <label for="password">Password</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s10 offset-s1">
-      <button class="btn btn-waves btn-waves-light pink lighten-2" type="submit" name="login">Log In</button>
-    </div>
-    <div class="col s12 center">
-      <br />
-      No account? <a href="/register" class="pink-text text-lighten-2">Sign up</a> for free.
-    </div>
-  </div>
-</form>
-
-
-<div class="container-fluid">
-  <div class="container bg-4 text-center">
-   <h3>Log In</h3>
-<!--Alert-->
-   {{#if fail}}<div class='alert alert-danger'>Email and password did not match. Please try again.</div>{{/if}}
-   {{#if invalid}}<div class='alert alert-danger'>Sorry, that email is not in our database. Create an account <a href='/create_account'>here.</a></div>{{/if}}
-
-   <form action="/login" method="POST">
-<!--Email-->
-   <div class="row delete">
-    <div class="col-lg-6">
-        <label><strong>Email Address</strong></label>
-    </div>
-    <div class="col-lg-6">
-      <div class='input-bar'>
-        <input type="text" name="login" style='width 276px;'>
-      </div>
-    </div>
-   </div>
-<!--Password-->
-   <div class="row delete">
-    <div class="col-lg-6">
-     <label><strong>Password</strong></label>
-    </div>
-    <div class="col-lg-6">
-      <div class='input-bar'>
-     <input name='password' type='password'><br>
-   </div>
-     <a data-toggle="modal" data-target="#password">Forgot password?</a>
-    </div>
-   </div>
-<!--Log in button-->
-   <div class="row">
-    <div class="col-lg-12">
-      <button class="btn btn-primary" type="submit">Log In</button>
-    </div>
-   </div>
-    </form>
-<!--Create Account Link-->
-    <div class="row">
-      <div class="col-lg-12">
-      <a href="/create_account">No account? Create one here.</a>
-    </div>
-   </div>
-   </div>
- </div>
-</div>
-<!-- Modal -->
-<div id="password" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-<!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Reset Password</h4>
-        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-remove fa-2x"></i></button>
-      </div>
-      <div class="modal-body">
-        <form action="/login" method="POST">
-          <div class='input-bar'>
-            <input type='hidden' name='reset_pass' value='true'>
-            <input type="email" name="login"><br>
-           </div>
-         <label><strong>Please enter your email address.</strong></label><br>
-         <div class="modal-footer">
-           <input type="submit" class="btn btn-primary" value='Submit'>
+    <h2 class="center pink-text text-lighten-2">Developer Log In <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:150px;vertical-align:middle"></h2>
+    <form class="col s12 m6 offset-m3 z-depth-3 hoverable" action="/dev/login" method="POST">
+      <!--******** E-mail ******-->
+      <div class="row">
+        <br />
+        <div class="input-field col s10 offset-s1">
+          <input id="login" name="login" type="email" class="validate">
+          <label for="login">Email</label>
         </div>
-
-        </form>
       </div>
+      <!--******* Password *******-->
+      <div class="row">
+        <div class="input-field col s10 offset-s1">
+          <input id="password" name="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <!--******* Submit ********-->
+      <div class="row">
+        <div class="col s10 offset-s1">
+          <button class="btn waves-effect waves-light pink lighten-2" type="submit" name="login">Log In</button>
+          <br /><br />
+        </div>
+      </div>
+    </form>
+  </div>
+  <!--**** PW Reset/Sign Up Links *****-->
+  <div class="row">
+    <div class="col s12 center">
+      <a class="btn waves-effect waves-light purple lighten-2" href="#reset-pass">Forgot Password</a>
+      <a class="btn waves-effect waves-light" href="/dev/register">Create an Account</a>
     </div>
-
+  </div><!-- .row -->
+</div><!-- .container -->
+<!--***********************************************************************
+                          Password Reset Modal
+************************************************************************-->
+<div id="reset-pass" class="modal">
+  <div class="modal-content">
+    <a href="#!" class="right modal-action modal-close pink-text text-lighten-2"><i class="material-icons">clear</i></a>
+    <h4 class="center pink-text text-lighten-2">Reset Password</h4>
+    <p>Enter the e-mail address for your account, and we'll send you a link to reset your password.</p>
+    <form action="/dev/login" method="POST">
+      <input type='hidden' name='reset_pass' value='true'>
+      <input type="email" name="login" placeholder="E-mail"><br>
+      <div class="modal-footer">
+       <input type="submit" class="btn pink lighten-2" value="Submit">
+      </div>
+    </form>
   </div>
 </div>
