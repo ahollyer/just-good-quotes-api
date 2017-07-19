@@ -47,6 +47,10 @@ app.get('/', function(req, res) {
   res.render('index.hbs')
 });
 
+app.get('/dev/', function(req, res) {
+  res.render('dev_info.hbs')
+});
+
 /****************************** API Routes **********************************/
 app.get('/api/:key', function(req, res, next) {
   let params = {
