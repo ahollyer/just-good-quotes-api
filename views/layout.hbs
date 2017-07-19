@@ -16,8 +16,17 @@
 </head>
 <body>
   <!--***********************************************************************
-                                  Sidenav
+                          Navbar - Sidenav on Mobile
   ************************************************************************-->
+  <!-- Dropdown Links (For Developers) -->
+  <ul id="dev-dropdown" class="dropdown-content">
+    <li><a href="/dev">Dev Panel</a></li>
+    <li><a href="/dev/guide">Getting Started</a></li>
+    <li class="divider"></li>
+    <li><a href="/dev/register">Sign Up</a></li>
+    <li><a href="/dev/login">Log In</a></li>
+  </ul>
+
   <nav class="pink lighten-2" role="navigation">
     <div class="nav-wrapper container">
       <a id="logo-container" href="/" class="brand-logo">Uplifting Quotes<img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons"></a>
@@ -25,9 +34,10 @@
         <li><a href="/">Home</a></li>
         <li><a href="/search">Search</a></li>
         <li><a href="#contribute">Contribute</a></li>
-        <li><a href="/dev">For Developers</a></li>
+        <!-- Dropdown Trigger (For Developers) -->
+        <li><a class="dropdown-button" href="#!" data-activates="dev-dropdown">For Developers<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
-
+      <!-- Links for Pancake Menu -->
       <ul id="nav-mobile" class="side-nav">
         <li><a href="#">Home</a></li>
         <li><a href="#">Search</a></li>

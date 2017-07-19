@@ -8,9 +8,12 @@
     "axios": "^0.16.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
+    "crypto": "0.0.3",
     "express": "^4.15.3",
+    "express-session": "^1.15.4",
     "hbs": "^4.0.1",
     "nodemon": "^1.11.0",
+    "pbkdf2": "^3.0.12",
     "pg-promise": "^6.3.5"
   },
   "devDependencies": {},

@@ -5,13 +5,25 @@
   <div class="section">
     <!--   Icon Section   -->
     <div class="row">
-      <div class="col s12 center">
-        <h1 class="pink-text text-lighten-2">Uplifting Quotes API <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:200px;vertical-align:middle"></h1>
-        <p>Welcome, developers! Add a snippet of inspiration to your project's login page, dashboard, or anywhere you like with this easy-to-use API. Log in or sign up to access your developer panel.</p>
+      <div class="col s12">
+        <h1 class="pink-text text-lighten-2 center">Getting Started <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:200px;vertical-align:middle"></h1>
+
+        <h4 class="pink-text text-lighten-2">Authentication</h4>
+        <p>Once you have an account, you will need to create an app to obtain your API key. This key will be used to authenticate all API calls.</p>
+        <ol>
+          <li><a href="/dev/login/" class="pink-text text-lighten-2">Log in</a> to your developer account (or <a href="/dev/register/" class="pink-text text-lighten-2">create one</a>).</li>
+          <li>Navigate to your <a href="/dev" class="pink-text text-lighten-2">developer panel</a></li>
+          <li>Click the button to "Create a New App"</li>
+          <li>Fill in your information, and click "Generate API Key"</li>
+        </ol>
         <br /><br />
 
-        <a href="/dev/login" class="btn pink lighten-2 btn-waves btn-waves-light">Log In</a>
-        <a href="/dev/register" class="btn pink lighten-2 btn-waves btn-waves-light">Sign up</a>
+        <h4 class="pink-text text-lighten-2">Endpoint</h4>
+        <p>All requests to the Uplifting Quotes API are made under https://uplift.aspenhollyer.com/api. Let's take a look at some examples.</p>
+
+        <pre><code>https://uplift.aspenhollyer.com/api/[YOUR_KEY]?random=true</code></pre>
+        <br /><br />
+
       </div>
 
     </div><!-- .row -->

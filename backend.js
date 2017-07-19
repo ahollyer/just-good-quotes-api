@@ -9,6 +9,10 @@ const axios = require('axios');
 const pgp = require('pg-promise')({ promiseLib: promise });
 const update_db = require('./update_db');
 const query_db = require('./query_db')
+/*********** Login-Related ***********/
+const session = require('express-session');
+const pbkdf2 = require('pbkdf2');
+const crypto = require('crypto');
 
 /************************ Database Configuration ***************************/
 const db = pgp(process.env.DATABASE || {
@@ -27,10 +31,27 @@ const db = pgp(process.env.DATABASE || {
 //     });
 // });
 
+/************************ E-mail Configuration ******************************/
+// var transporter = nodemailer.createTransport({
+//   host: process.env['SMTP_HOST'],
+//   port: 465,
+//   secure: true,
+//   auth:{
+//     user: process.env['SMTP_USER'],
+//     pass: process.env['SMTP_PASSWORD']
+//   }
+// });
+
 /************************** App Configuration *******************************/
 app.set('view engine', 'hbs');
 app.use(body_parser.urlencoded({extended: false}));
 app.use('/static', express.static('static'));
+app.use(session({
+  secret: process.env.SECRET_KEY || 'dev',
+  resave: true,
+  saveUninitialized: false,
+  cookie: {maxAge: 6000000}
+}));
   ////////////////////////////////////////////////
  // Un-comment to log incoming client requests //
 ////////////////////////////////////////////////
@@ -42,16 +63,7 @@ app.use('/static', express.static('static'));
 const key = keygen();
 console.log(key);
 
-/****************************** App Routes **********************************/
-app.get('/', function(req, res) {
-  res.render('index.hbs')
-});
-
-app.get('/dev/', function(req, res) {
-  res.render('dev_info.hbs')
-});
-
-/****************************** API Routes **********************************/
+/****************************** API Requests ********************************/
 app.get('/api/:key', function(req, res, next) {
   let params = {
     key: req.params.key,
@@ -75,6 +87,35 @@ app.get('/api/:key', function(req, res, next) {
     next(err);
   })
 });
+
+/****************************** App Routes **********************************/
+app.get('/', function(req, res) {
+  res.render('index.hbs');
+});
+
+app.get('/search', function(req, res) {
+  res.render('search.hbs');
+})
+
+  /////////////////////
+ // Developer Tools //
+/////////////////////
+app.get('/dev/', function(req, res) {
+  res.render('dev_info.hbs');
+});
+
+app.get('/dev/register/', function(req, res) {
+  res.render('register.hbs');
+});
+
+app.get('/dev/login/', function(req, res) {
+  res.render('login.hbs');
+});
+
+app.get('/dev/guide/', function(req, res) {
+  res.render('api_guide.hbs');
+})
+
 
 /************************ Database Update Form Routes ************************/
 app.get('/add_quote/', function(req, res) {

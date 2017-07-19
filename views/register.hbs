@@ -1,0 +1,48 @@
+
+<h1>Create An Account</h1>
+{{#if fail}}<div class="alert alert-danger">Your email address is already in the system. Please use a different email.</div>{{/if}}
+   <form action="/create_account" method="POST">
+   <div class="row delete">
+    <div class="col-lg-6">
+    <label><strong>Email Address</strong></label>
+    </div>
+    <div class="col-lg-6">
+      <div class='input-bar'>
+    <input type="email" name="login">
+  </div>
+    </div>
+    </div>
+    <div class="row delete">
+    <div class="col-lg-6">
+    <label><strong>Password</strong></label>
+    </div>
+    <div class="col-lg-6">
+      <div class='input-bar'>
+    <input name='password' type='password'>
+  </div>
+    </div>
+    </div>
+    <div class="row delete">
+    <div class="col-lg-6">
+    <label><strong>Company Name</strong></label>
+    </div>
+    <div class="col-lg-6">
+      <div class='input-bar'>
+    <input type='text' name="name">
+  </div>
+    </div>
+    </div>
+    <div class="row delete">
+    <div class="col-lg-12">
+    </div>
+    </div>
+    <div class="row delete">
+    <div class="col-lg-12">
+    </div>
+    </div>
+    <div class="row delete">
+    <div class="col-lg-12">
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </div>
+
+  </form>

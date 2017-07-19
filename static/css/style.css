@@ -85,3 +85,10 @@ p {
 footer.page-footer {
   margin: 0;
 }
+
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: inline-block;
+  padding: 10px 15px;
+}

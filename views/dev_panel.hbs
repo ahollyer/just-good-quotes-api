@@ -1,0 +1,91 @@
+<body>
+  <div class="container-fluid bg-1">
+      <h1>{{company.name}}</h1>
+      <p><a href="/changelogin/{{company.verify_key}}">Change Your Email Address  </a>|<a href="/changepass/{{company.verify_key}}">  Change Your Password</a></p>
+      <p>Active Keys: {{keys}}</p>
+  </div>
+  <div class="container-fluid bg-2 text-center">
+    {{#unless verified}}
+    <div class="alert alert-danger text-center">
+      Please verify your account to view the console page.
+      <a href="/resend/?key={{company.verify_key}}&id={{company.id}}">Resend verification email?</a>
+    </div>
+    {{/unless}}
+    {{#if verified}}
+      <form method='post'>
+        <label>Add new game:</label>
+        <input type='text' name='name'>
+        <input type="hidden" value="{{id}}" name="game_id">
+        <input type='submit' class="btn btn-sm btn-primary" >
+      </form>
+   </div>
+  <div class="bg-3a">
+  {{#each games}}
+  {{#if active}}
+  <div class="container-fluid bg-3 text-center">
+        <div class="row">
+         <div class="col-md-6 text-left">
+          <h2 id="adminName">{{name}}</h2>
+        </div>
+        <div class="col-md-6 text-right">
+          <h5>Status</h5>
+          {{#unless api_key_valid}}<span class="fa-stack fa-lg">
+          <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
+          <i class="fa fa-ban fa-stack-2x text-danger"></i>
+          </span>{{/unless}}
+          {{#if api_key_valid}}<i class="fa fa-thumbs-o-up fa-2x"></i>{{/if}}
+        </div>
+       </div>
+       <div class="row row-api">
+         <div class="col-md-12">
+        {{#if key_present}}<h3><span style='color:#debd27'>API Key: </span>{{api_key}}</h3>
+        <h5>Please read <a style='color:white; text-decoration:underline' href='/faq'>our FAQ</a> for instructions.</h5>
+        {{#unless api_key_valid}}<h5>Key awaiting validation. Please click the verification link in your email. <a style="color:white; text-decoration: underline" href="/resend?key={{api_key}}&id={{id}}">Click here to resend email.</a>{{/unless}}
+        {{/if}}
+        {{#unless key_present}}
+        <form method="POST" action="/console" name="new_api">
+          <input type='hidden' name='api_key_generate' value='true'>
+          <input type='hidden' name='game_id' value='{{id}}'>
+          <input type='submit' class="btn btn-sm btn-success-api"value='Generate API key'>
+         </form>
+         {{/unless}}
+      </div>
+    </div>
+    <div class="row delete">
+        <div class="col-md-12">
+         <button type="button" class="btn btn-sm btn-success-delete" data-toggle="modal" data-target="#delete{{id}}">DELETE GAME</button>
+         </div>
+        </div>
+    </div>
+
+{{/if}}
+{{/each}}
+
+{{#each games}}
+  <!-- Modal -->
+  <div id="delete{{id}}" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">WARNING</h4>
+          <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-remove fa-2x"></i></button>
+        </div>
+        <div class="modal-body">
+           <h5>You are about to delete API access to {{name}}</h5>
+         </div>
+         <div class="modal-footer">
+           <form method="POST" action="/console" name="delete_game">
+             <input type='hidden' name='delete_game' value='true'>
+             <input type="hidden" value="{{name}}" name="name">
+             <input type="hidden" value="{{id}}" name="game_id">
+             <input type="submit" class="btn btn-primary" value="DELETE GAME">
+           </form>
+         </div>
+       </div>
+     </div>
+   </div>
+ {{/each}}
+</div>
+{{/if}}
+</body>
