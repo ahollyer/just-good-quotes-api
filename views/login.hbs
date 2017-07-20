@@ -1,0 +1,60 @@
+<!-- TODO: Change to toasts -->
+<!-- Alerts -->
+{{#if fail}}<div class='alert alert-danger'>Email and password did not match. Please try again.</div>{{/if}}
+{{#if invalid}}<div class='alert alert-danger'>Sorry, that email is not in our database. Please verify your e-mail, or create an account <a class="pink-text text-lighten-2" href='/dev/register'>here.</a></div>{{/if}}
+<!--***********************************************************************
+                              Login Form
+************************************************************************-->
+<div class="container">
+  <div class="row">
+    <h2 class="center pink-text text-lighten-2">Developer Log In <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:150px;vertical-align:middle"></h2>
+    <form class="col s12 m6 offset-m3 z-depth-3 hoverable" action="/dev/login" method="POST">
+      <!--******** E-mail ******-->
+      <div class="row">
+        <br />
+        <div class="input-field col s10 offset-s1">
+          <input id="login" name="login" type="email" class="validate">
+          <label for="login">Email</label>
+        </div>
+      </div>
+      <!--******* Password *******-->
+      <div class="row">
+        <div class="input-field col s10 offset-s1">
+          <input id="password" name="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <!--******* Submit ********-->
+      <div class="row">
+        <div class="col s10 offset-s1">
+          <button class="btn waves-effect waves-light pink lighten-2" type="submit" name="login">Log In</button>
+          <br /><br />
+        </div>
+      </div>
+    </form>
+  </div>
+  <!--**** PW Reset/Sign Up Links *****-->
+  <div class="row">
+    <div class="col s12 center">
+      <a class="btn waves-effect waves-light purple lighten-2" href="#reset-pass">Forgot Password</a>
+      <a class="btn waves-effect waves-light" href="/dev/register">Create an Account</a>
+    </div>
+  </div><!-- .row -->
+</div><!-- .container -->
+<!--***********************************************************************
+                          Password Reset Modal
+************************************************************************-->
+<div id="reset-pass" class="modal">
+  <div class="modal-content">
+    <a href="#!" class="right modal-action modal-close pink-text text-lighten-2"><i class="material-icons">clear</i></a>
+    <h4 class="center pink-text text-lighten-2">Reset Password</h4>
+    <p>Enter the e-mail address for your account, and we'll send you a link to reset your password.</p>
+    <form action="/dev/login" method="POST">
+      <input type='hidden' name='reset_pass' value='true'>
+      <input type="email" name="login" placeholder="E-mail"><br>
+      <div class="modal-footer">
+       <input type="submit" class="btn pink lighten-2" value="Submit">
+      </div>
+    </form>
+  </div>
+</div>

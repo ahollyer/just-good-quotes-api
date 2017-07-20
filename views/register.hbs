@@ -1,0 +1,50 @@
+<!-- TODO: Use a toast -->
+{{#if fail}}<div class="alert alert-danger">That e-mail address is already in the system. Please <a href="/dev/login">log in</a> to your account, or register using a different e-mail.</div>{{/if}}
+<!--***********************************************************************
+                                  Header
+************************************************************************-->
+<div class="container">
+  <div class="row">
+    <div class="col s12 center">
+      <h2 class="pink-text text-lighten-2">Create Developer Account <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:150px;vertical-align:middle"></h2>
+      <p class="light">This page is for web developers who want to use Uplifting Quotes in their projects. Just want to see cool quotes? Go <a href="/" class="pink-text text-lighten-2">here</a> instead.</p>
+    </div>
+  </div><!-- .row -->
+</div><!-- .container -->
+<!--***********************************************************************
+                        Account Registration Form
+************************************************************************-->
+<div class="container">
+  <div class="row">
+    <form class="col s12 m6 offset-m3 z-depth-3 hoverable" action="/dev/register" method="POST">
+      <!--******** E-mail ******-->
+      <div class="row">
+        <br />
+        <div class="input-field col s10 offset-s1">
+          <input id="login" name="login" type="email" class="validate">
+          <label for="login">Email</label>
+        </div>
+      </div>
+      <!--******* Password *******-->
+      <div class="row">
+        <div class="input-field col s10 offset-s1">
+          <input id="password" name="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <!--******* Submit ********-->
+      <div class="row">
+        <div class="col s10 offset-s1">
+          <button class="btn waves-effect waves-light pink lighten-2" type="submit" name="login">Sign Up</button>
+          <br /><br />
+        </div>
+      </div>
+    </form>
+  </div><!-- .row -->
+  <!--****** Go to login page *****-->
+  <div class="row">
+    <div class="col s12 center">
+      Already have an account? <a class="pink-text text-lighten-2" href="/dev/login">Log in</a>.
+    </div>
+  </div><!-- .row -->
+</div><!-- .container -->
