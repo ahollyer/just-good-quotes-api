@@ -12,17 +12,132 @@
         <p>Once you have an account, you will need to create an app to obtain your API key. This key will be used to authenticate all API calls.</p>
         <ol>
           <li><a href="/dev/login/" class="pink-text text-lighten-2">Log in</a> to your developer account (or <a href="/dev/register/" class="pink-text text-lighten-2">create one</a>).</li>
-          <li>Navigate to your <a href="/dev" class="pink-text text-lighten-2">developer panel</a></li>
-          <li>Click the button to "Create a New App"</li>
-          <li>Fill in your information, and click "Generate API Key"</li>
+          <li>Navigate to the <a href="/dev" class="pink-text text-lighten-2">developer panel</a>.</li>
+          <li>Fill in the form titled "Create New App," and click submit.</li>
+          <li>Your new app now appears in the "Manage My Apps" panel.</li>
+          <li>Beneath your app, click the button to "Generate New API Key."</li>
         </ol>
+        <p><strong>A NOTE ABOUT SECURITY:</strong> Keep your API keys secure and change them frequently. You can generate new API keys for free at any time using the <a href="/dev" class="pink-text text-lighten-2">developer panel</a>.</p>
         <br /><br />
 
         <h4 class="pink-text text-lighten-2">Endpoint</h4>
-        <p>All requests to the Uplifting Quotes API are made under https://uplift.aspenhollyer.com/api. Let's take a look at some examples.</p>
-
-        <pre><code>https://uplift.aspenhollyer.com/api/[YOUR_KEY]?random=true</code></pre>
+        <p>All requests to the Uplifting Quotes API are made under http://quotes.aspenhollyer.com/api. All responses are in JSON format.</p>
+        <h5>Request</h5>
+        <pre><code>GET http://quotes.aspenhollyer.com/api/[YOUR_KEY]</code></pre>
         <br /><br />
+        <h5>Parameters</h5>
+        <p>These parameters go in the query string, directly after your API key.</p>
+
+        <table class="striped">
+        <thead>
+          <tr>
+              <th style="width:20%">Name</th>
+              <th style="width:20%">Type</th>
+              <th style="width:60%">Description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>random</td>
+            <td>boolean</td>
+            <td>Required if no category or author is specifed. Default to false. When set to true, returns random quotes from the database.</td>
+          </tr>
+          <tr>
+            <td>numQuotes</td>
+            <td>integer</td>
+            <td>Optional. Default is 1. Allows you to specify the number of quotes returned. Max 20.</td>
+          </tr>
+          <tr>
+            <td>author</td>
+            <td>string</td>
+            <td>Optional. May be used to return quotes from a specific author, or authors using comma-separated values.</td>
+          </tr>
+          <tr>
+            <td>excludeAuth</td>
+            <td>string</td>
+            <td>Optional. May be used to exclude a specific author, or authors using comma-separated values.</td>
+          </tr>
+          <tr>
+            <td>category</td>
+            <td>string</td>
+            <td>Optional. May be used to return quotes in a specific category, or categories using comma-separated values.</td>
+          </tr>
+          <tr>
+            <td>excludeCat</td>
+            <td>string</td>
+            <td>Optional. May be used to exclude a specific category, or categories using comma-separated values. <strong>*NOTE: Use exludeCat=nsfw to filter for profanity, innuendo, and other sensitive content</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+
+<h4 class="pink-text text-lighten-2">Examples</h4>
+<p>Let's take a look at some common use cases.</p>
+<h5>Get a Random Quote</h5>
+<p>The request below returns one random quote:</p>
+<pre><code>http://quotes.aspenhollyer.com/api/[YOUR_KEY]?random=true</code></pre>
+<br />
+In the response body below, you can see that a random quote has been returned, along with its author, an array of categories it belongs to, and its unique ID.
+<pre>
+<code>[{
+  "author":"Earl Nightingale",
+  "id":91,
+  "text":"We become what we think about.",
+  "categories":["advice","attitude","education","future","optimism","learning","philosophy"]
+}]
+</code></pre>
+<br /><br />
+<h5>Specify Number of Quotes</h5>
+<pre><code>http://quotes.aspenhollyer.com/api/[YOUR_KEY]?random=true&numQuotes=5</code></pre>
+<br />
+You can return up to 20 quotes per request. The response body looks something like this:
+<pre>
+<code>[{
+  "author":"J.R.R. Tolkien",
+  "id":35,
+  "text":"And though in all lands love is now mingled with grief, it grows perhaps the greater.",
+  "categories":["hardship","literature","love"]
+},
+{
+  "author":"J.R.R. Tolkien",
+  "id":43,
+  "text":"Faithless is he that says farewell when the road darkens.",
+  "categories":["advice","attitude","courage","friendship","literature","hardship","perseverance"]
+},
+{
+  "author":"Orson Scott Card",
+  "id":56,
+  "text":"There are times when the world is rearranging itself, and at times like that, the right words can change the world.",
+  "categories":["education","literature","sci fi"]
+},
+{
+  "author":"Martin Luther King, Jr.",
+  "id":67,
+  "text":"Darkness cannot drive out darkness: only light can do that. Hate cannot drive out hate: only love can do that.",
+  "categories":["advice","kindness","love","optimism","tolerance"]
+},
+{
+  "author":"Mark Twain",
+  "id":70,
+  "text":"Whenever you find yourself on the side of the majority, it is time to pause and reflect.",
+  "categories":["advice","learning","politics","tolerance"]
+}]
+</code></pre>
+<br /><br />
+
+<h5>Search By Category</h5>
+The following request returns quotes under the categories of love, literature, or both.
+<pre><code>http://quotes.aspenhollyer.com/api/[YOUR_KEY]?category=love,literature</code></pre>
+<br /><br />
+
+<h5>Clean Search</h5>
+Alternatively, you may prefer to exclude all quotes under certain categories.
+<pre>
+<code>http://quotes.aspenhollyer.com/api/[YOUR_KEY]?excludeCat=nsfw,politics,religion</code></pre>
+
+
+
 
       </div>
 
