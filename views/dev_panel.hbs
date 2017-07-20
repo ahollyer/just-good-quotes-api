@@ -35,16 +35,18 @@
         {{#if active}}
           <div class="col s10 offset-s1 z-depth-1 light" style="margin-bottom:10px;">
             <!-- TODO: Add name/url change form -->
-            <a href="#" class="btn right pink lighten-2" style="margin-top:10px;padding:0 8px;"><i class="material-icons">edit</i></a>
+            <a href="#" class="right pink-text text-lighten-2" style="margin-top:10px;"><i class="material-icons">edit</i></a>
             <p id="adminName"><strong>Project Name:</strong> {{name}}</p>
             <p><strong>URL:</strong> <a href="{{url}}">{{url}}</a></p>
 
             {{#if key_present}}
               <p><strong>API Key:</strong> {{api_key}}</p>
               <p class="center"><em>(Need help? Check out the <a class="pink-text text-lighten-2" href="/dev/guide/">Getting Started</a> guide.)</em></p>
+            {{else}}
+              <p>This app doesn't have an API key yet. Click the button to generate one.</p>
             {{/if}}
 
-            <form class="center" method="POST" action="./" name="new_api">
+            <form class="center" method="POST" name="new_api">
               <input type="hidden" name="api_key_generate" value="true">
               <input type="hidden" name="app_id" value="{{id}}">
               <input type="submit" class="btn waves-effect waves-light cyan" value="Generate New API key">

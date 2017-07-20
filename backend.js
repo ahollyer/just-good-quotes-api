@@ -118,7 +118,7 @@ app.get('/dev', function(req, res, next) {
   .then(apps => {
     // Check for api keys associated with apps, pass to front end
     apps.forEach(app => {
-      if(app.api_key.length === 50) {
+      if(app.api_key != null) {
         app['key_present'] = true;
       }
     });
