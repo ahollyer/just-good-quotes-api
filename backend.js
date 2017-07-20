@@ -3,7 +3,6 @@ const app = express();
 const promise = require('bluebird');
 /************ API-Related **************/
 const body_parser = require('body-parser');
-const keygen = require("apikeygen").apikey;
 const axios = require('axios');
 /*********** DB-Related *************/
 const pgp = require('pg-promise')({ promiseLib: promise });
@@ -59,9 +58,6 @@ app.use(session({
 //   next();
 // });
 
-const key = keygen();
-console.log(key);
-
 /****************************** API Requests ********************************/
 app.get('/api/:key', function(req, res, next) {
   let params = {
@@ -96,18 +92,18 @@ app.get('/search', function(req, res) {
   res.render('search.hbs', {title: 'Uplifting Quotes: Search'});
 })
 
-  /////////////////////////////////////
- // Developer Tools, API Use Guides //
-/////////////////////////////////////
-app.get('/dev/', function(req, res) {
+  /////////////////////////////////
+ // Developer Tools & Resources //
+/////////////////////////////////
+app.get('/dev', function(req, res, next) {
   let account = req.session.user || null;
-  let context = {
+  context = {
     account: account,
-    title: 'Uplifting Quotes - Developer Panel'
+    title: 'Uplifting Quotes: Developer Panel'
   };
   // If not logged in, redirect user to developer welcome screen.
   if(account === null) {
-    res.redirect('/dev/welcome/');
+    res.redirect('/dev/welcome');
     return;
   }
   // Check if account is verified, pass to front end
@@ -117,7 +113,7 @@ app.get('/dev/', function(req, res) {
   // Get apps associated with the account, pass to front end
   const appQuery = `SELECT * FROM app
                     WHERE user_id = ${account.id} AND active
-                    ORDER BY name`;
+                    ORDER BY name;`;
   db.query(appQuery)
   .then(apps => {
     // Check for api keys associated with apps, pass to front end
@@ -125,31 +121,102 @@ app.get('/dev/', function(req, res) {
       if(app.api_key.length === 50) {
         app['key_present'] = true;
       }
+    });
 
     context['apps'] = apps;
     context['numKeys'] = apps.length;
 
     res.render('dev_panel.hbs', context);
-    })
   })
-  .catch(function(err) {
-    console.error(err.stack);
+  .catch(err => {
+    next(err.stack);
   })
-
 });
 
-app.get('/dev/welcome/', function(req, res) {
-  res.render('dev_info.hbs', {title: 'Uplifting Quotes: Welcome'});
-})
+////////////
+// POST requests for console view
+// includes:
+//    adding games to database
+//    deleting games  -- truly only deleting user's access to a game
+//    generating API keys
+app.post('/dev', function(request, response, next){
+  const account = request.session.user || null;
+  if (account === null) {
+    response.redirect('/dev/login');
+  }
+  // if (account.verified){
+  //   context['verified'] = true;
+  // }
+  // generates API key, checks if unique then sends to frontend and sends
+  //    verification email to user
+  if (request.body.api_key_generate) {
+    let id = request.session.user.id;
+    let game_id = request.body.app_id;
+    let query = `UPDATE app
+                 SET api_key = $1
+                 WHERE id = $2
+                 RETURNING name, url`;
+    auth.generateApiKey(db)    // function is promise generating unique key
+    .then(function(key){
+      db.one(query, [key, game_id])   // sets API key and returns game name
+      .then(function(obj){
+        response.redirect('/dev');
+      })
+      .catch(function(err){
+        console.error(err.stack);
+      })
+    });
 
-app.get('/dev/guide/', function(req, res) {
+  }
+  // Delete user access to game by setting active flag to false
+  //    Prevents 'deleted' game from returning in database call above
+  else if (request.body.deleteApp) {
+    let app_id = request.body.app_id;
+    let query = "UPDATE app SET active = FALSE WHERE id = $1;"
+    db.query(query, app_id)
+      .then (function() {
+        if (account === null) {response.redirect('/dev/login'); return}
+        // response.redirect('/dev');
+        response.redirect('/dev');
+      })
+      .catch(function(err) {
+        console.error(err.stack);
+        response.redirect('/dev');
+      });
+  }
+  // new game
+  else if(request.body.createApp){
+    let name = request.body.appName;
+    let url = request.body.appUrl;
+    let key = 'Pending';
+    let query1 = `INSERT INTO app (user_id, name, url)
+                  VALUES (${account.id}, '${name}', '${url}')
+                  RETURNING id`;
+    db.any(query1) // adds game to game table and returns id
+    .then(function() {
+      if (account === null) {
+        response.redirect('/dev/login');
+        return;
+      }
+      response.redirect('/dev')
+    })
+    .catch(function(err){
+      console.error(err.stack)
+    })
+  }
+  });
+
+app.get('/dev/welcome', function(req, res) {
+  res.render('dev_info.hbs', {title: 'Uplifting Quotes: Welcome'});
+});
+
+app.get('/dev/guide', function(req, res) {
   res.render('api_guide.hbs', {title: 'Uplifting Quotes: Getting Started'});
-})
+});
 
   ////////////////////////////////////////
  // Developers - Create Account, Login //
 ////////////////////////////////////////
-// Creating an account
 app.get('/dev/register', function(request, response) {
   context = {
     title: 'Uplifting Quotes: Create Account',
@@ -159,62 +226,60 @@ app.get('/dev/register', function(request, response) {
   response.render('register.hbs', context)
 });
 
-// Mechanics for creating an account
-//    Generates unique verification key, sends to user in email
-//    It is required that they verify in order to use the API
 app.post('/dev/register', function(request, response, next){
-  let login = request.body.login;
-  let password = request.body.password;
-  let name = request.body.name;
-  let pub = request.body.public;
-  if (pub == 'on') {
-    pub = true;
-  }
-  unique_ver_key()  // promise returning unique key
-  .then(function(verify_key){
-    let mailOptions = {
-      from:'"ScoreHoard" <donotreply@scorehoard.com>',
-      to: login,
-      subject: 'Confirmation Email',
-      text: 'Thank you',
-      html: `<p>Thank you for registering an account with ScoreHoard. May we fulfill your ScoreHoarding needs! Please click <a href="http://scorehoard.com/verify/${verify_key}">here</a> to verify your account with us!</p>`
-    };
-    let stored_pass = create_hash(password);
-    let query = 'SELECT login FROM company WHERE login = $1';
+  // TODO: Figure out where that weird comma is coming from
+  const login = request.body.login.slice(0, request.body.login.length-1);
+  const password = request.body.password;
+
+  auth.generateVerKey(db)  // promise returning unique key
+  .then(function(verKey){
+    let key = verKey;
+    // let mailOptions = {
+    //   from:'"ScoreHoard" <donotreply@scorehoard.com>',
+    //   to: login,
+    //   subject: 'Confirmation Email',
+    //   text: 'Thank you',
+    //   html: `<p>Thank you for registering an account with ScoreHoard. May we fulfill your ScoreHoarding needs! Please click <a href="http://scorehoard.com/verify/${verify_key}">here</a> to verify your account with us!</p>`
+    // };
+    let stored_pass = auth.createHash(password);
+    let query = `SELECT * FROM developer
+                 WHERE email ILIKE '${login}';`;
     db.none(query, login)
-    .then(function(){
-      let query = 'INSERT INTO company VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, $5) RETURNING *'
-      db.one(query, [login, stored_pass, pub, name, verify_key])  // returns new company
-        .then(function(company){
-          request.session.company = company;
-          request.session.user = name;
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              return console.error(error);
-            }
-            console.log('Message send: ', info.messageId, info.response);
-          });
-          response.redirect('/console');
+    .then(function() {
+      query = `INSERT INTO developer
+               VALUES (DEFAULT, '${login}', DEFAULT, '${stored_pass}', '${key}')
+               RETURNING *;`;
+      db.query(query)  // returns new developer
+        .then(function(developer) {
+          console.log('DEVELOPER: ' + developer);
+          request.session.user = developer;
+          // transporter.sendMail(mailOptions, (error, info) => {
+          //   if (error) {
+          //     return console.error(error);
+          //   }
+          //   console.log('Message send: ', info.messageId, info.response);
+          // });
+          response.redirect('/dev/');
         })
         .catch(function(err){next(err)})
       })
     .catch(function(err){
-      if (err.name == "QueryResultError"){
-        context = {title: "Create Account", fail: true}
-        response.render('create_account.hbs', context)
+      if (err.name === "QueryResultError") {
+        let context = {title: "Uplifting Quotes: Create Account", fail: true};
+        response.render('register.hbs', context);
       }
       else {
-        console.error(err);
+        console.error(err.stack);
       };
     })
   })
   .catch(function(err){
-    if (err.name == "QueryResultError"){
-      context = {title: "Create Account", fail: true}
-      response.render('create_account.hbs', context)
+    if (err.name === "QueryResultError"){
+      let context = {title: "Uplifting Quotes: Create Account", fail: true};
+      response.render('create_account.hbs', context);
     }
     else {
-      console.error(err);
+      console.error(err.stack);
     };
   })
 });
@@ -267,7 +332,7 @@ app.post('/dev/login/', function(request, response) {
     const login = request.body.login;
     const password = request.body.password;
     const devQuery = `SELECT * FROM developer
-                      WHERE email ILIKE ${login}`;
+                      WHERE email ILIKE '${login}'`;
     db.one(devQuery, login)
     .then(developer => {
       return {
@@ -278,8 +343,8 @@ app.post('/dev/login/', function(request, response) {
     .then(loginObj => {
       // If password check successful, redirect user to the dev panel.
       if(loginObj.authorized) {
-        request.session.user = login;
-        response.redirect('/');
+        request.session.user = loginObj.developer;
+        response.redirect('/dev');
       // If password check unsuccessful, display an alert to the user.
       } else if(!loginObj.authorized) {
         context = {title: 'Uplifting Quotes: Login', fail: true}
@@ -307,8 +372,6 @@ app.get('/dev/logout', function(request, response, next) {
     response.redirect('/');
   });
 })
-
-
 
 /************************ Database Update Form Routes ************************/
 app.get('/add_quote/', function(req, res) {

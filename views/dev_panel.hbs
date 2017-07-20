@@ -1,91 +1,100 @@
-<body>
-  <div class="container-fluid bg-1">
-      <h1>Account Details</h1>
-      <p><a href="/changelogin/{{company.verify_key}}">Change Your Email Address  </a>|<a href="/changepass/{{company.verify_key}}">  Change Your Password</a></p>
-      <p>Active Keys: {{numKeys}}</p>
+<!--***********************************************************************
+                            Account Details
+************************************************************************-->
+<div class="container">
+    <h2 class="center pink-text text-lighten-2">Developer Panel <img class="logo-img" src="/static/img/uplifting.png" alt="a girl being lifted by balloons" style="height:150px;vertical-align:middle"></h2>
+    <div class="row z-depth-3">
+      <h4 class="center pink-text text-lighten-2 pink lighten-5">Account Details</h4>
+      <div class="col s10 offset-s1 light">
+        <p><strong>Email:</strong> {{account.email}} <a class="pink-text text-lighten-2" href="/changelogin/{{account.verify_key}}"><i class="material-icons">edit</i></a>
+        <br />
+        <strong>Password:</strong> <a class="pink-text text-lighten-2" href="/changepass/{{account.verify_key}}">change password</a></p>
+        <p>You have {{numKeys}} active app(s). Remember to change your API keys frequently for security.</p>
+    </div>
+  </div><!-- .row -->
+</div><!-- .container -->
+
+<div class="container">
+  {{#unless verified}}
+  <!--***********************************************************************
+                        Verify Account Notification
+  ************************************************************************-->
+  <div class="col s10 offset-s1 light">
+    To proceed, please check your inbox and verify your account.
+    <a href="/resend/?key={{account.verify_key}}&id={{account.id}}">Resend verification email</a>
   </div>
-  <div class="container-fluid bg-2 text-center">
-    {{#unless verified}}
-    <div class="alert alert-danger text-center">
-      To proceed, please check your inbox and verify your account.
-      <a href="/resend/?key={{user.verify_key}}&id={{user.id}}">Resend verification email?</a>
-    </div>
-    {{/unless}}
-    {{#if verified}}
-      <form method='post'>
-        <label>Create an App:</label>
-        <input type='text' name='name'>
-        <input type="hidden" value="{{id}}" name="app_id">
-        <input type='submit' class="btn btn-sm btn-primary" >
-      </form>
-   </div>
-  <div class="bg-3a">
-  {{#each games}}
-  {{#if active}}
-  <div class="container-fluid bg-3 text-center">
-        <div class="row">
-         <div class="col-md-6 text-left">
-          <h2 id="adminName">{{name}}</h2>
-        </div>
-        <div class="col-md-6 text-right">
-          <h5>Status</h5>
-          {{#unless api_key_valid}}<span class="fa-stack fa-lg">
-          <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
-          <i class="fa fa-ban fa-stack-2x text-danger"></i>
-          </span>{{/unless}}
-          {{#if api_key_valid}}<i class="fa fa-thumbs-o-up fa-2x"></i>{{/if}}
-        </div>
-       </div>
-       <div class="row row-api">
-         <div class="col-md-12">
-        {{#if key_present}}<h3><span style='color:#debd27'>API Key: </span>{{api_key}}</h3>
-        <h5>Please read <a style='color:white; text-decoration:underline' href='/faq'>our FAQ</a> for instructions.</h5>
-        {{#unless api_key_valid}}<h5>Key awaiting validation. Please click the verification link in your email. <a style="color:white; text-decoration: underline" href="/resend?key={{api_key}}&id={{id}}">Click here to resend email.</a>{{/unless}}
+  {{/unless}}
+
+  {{#if verified}}
+  <!--***********************************************************************
+                            Manage Apps Panel
+  ************************************************************************-->
+    <div class="row z-depth-2">
+      <h4 class="center pink-text text-lighten-2 pink lighten-5">Manage My Apps</h4>
+      {{#each apps}}
+        {{#if active}}
+          <div class="col s10 offset-s1 z-depth-1 light" style="margin-bottom:10px;">
+            <!-- TODO: Add name/url change form -->
+            <a href="#" class="btn right pink lighten-2" style="margin-top:10px;padding:0 8px;"><i class="material-icons">edit</i></a>
+            <p id="adminName"><strong>Project Name:</strong> {{name}}</p>
+            <p><strong>URL:</strong> <a href="{{url}}">{{url}}</a></p>
+
+            {{#if key_present}}
+              <p><strong>API Key:</strong> {{api_key}}</p>
+              <p class="center"><em>(Need help? Check out the <a class="pink-text text-lighten-2" href="/dev/guide/">Getting Started</a> guide.)</em></p>
+            {{/if}}
+
+            <form class="center" method="POST" action="./" name="new_api">
+              <input type="hidden" name="api_key_generate" value="true">
+              <input type="hidden" name="app_id" value="{{id}}">
+              <input type="submit" class="btn waves-effect waves-light cyan" value="Generate New API key">
+              <button type="button" class="btn waves-effect waves-light pink" data-toggle="modal" data-target="delete{{id}}">Delete This App</button>
+              <br /><br />
+            </form>
+
+          </div><!-- .col -->
         {{/if}}
-        {{#unless key_present}}
-        <form method="POST" action="/console" name="new_api">
-          <input type='hidden' name='api_key_generate' value='true'>
-          <input type='hidden' name='app_id' value='{{id}}'>
-          <input type='submit' class="btn btn-sm btn-success-api"value='Generate API key'>
-         </form>
-         {{/unless}}
+      {{/each}}
+    </div><!-- .row -->
+
+  <!--***********************************************************************
+                            Create New App Form
+  ************************************************************************-->
+  <div class="row z-depth-2">
+    <h4 class="center pink-text text-lighten-2 pink lighten-5">Create New App</h4>
+    <form class="col s10 offset-s1 light" method="POST">
+      <input type="hidden" name="createApp" value="true">
+      <div class="input-field">
+        <label for="appName">App Name</label>
+        <input id="appName" type="text" name="appName">
       </div>
-    </div>
-    <div class="row delete">
-        <div class="col-md-12">
-         <button type="button" class="btn btn-sm btn-success-delete" data-toggle="modal" data-target="#delete{{id}}">DELETE GAME</button>
-         </div>
-        </div>
-    </div>
+      <div class="input-field">
+        <label for="appUrl">URL (optional)</label>
+        <input id="appUrl" type="url" name="appUrl">
+      </div>
+      <input type="hidden" value="{{id}}" name="app_id">
+      <div class="input-field center">
+        <input type="submit" class="btn waves-effect waves-light pink lighten-2" value="create app">
+        <br /><br />
+      </div>
+    </form>
+  </div><!-- .row -->
+</div><!-- .container -->
 
-{{/if}}
+{{#each apps}}
+  <!--***********************************************************************
+                              Delete App Form
+  ************************************************************************-->
+  <div id="delete{{id}}" class="modal">
+    <div class="modal-content">
+      <a href="#!" class="right pink-text modal-action modal-close"><i class="material-icons">clear</i></a>
+      <p>You are about to delete all API permissions for <strong>{{name}}</strong>. Are you sure?</p>
+        <form class="center" method="POST" name="deleteApp">
+          <input type="hidden" name="deleteApp" value="true">
+          <input type="hidden" value="{{id}}" name="app_id">
+          <input type="submit" class="btn pink waves-effect waves-light" value="I understand - delete this app">
+        </form>
+    </div>
+  </div>
 {{/each}}
-
-{{#each games}}
-  <!-- Modal -->
-  <div id="delete{{id}}" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-  <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">WARNING</h4>
-          <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-remove fa-2x"></i></button>
-        </div>
-        <div class="modal-body">
-           <h5>You are about to delete API access to {{name}}</h5>
-         </div>
-         <div class="modal-footer">
-           <form method="POST" action="/console" name="delete_game">
-             <input type='hidden' name='delete_game' value='true'>
-             <input type="hidden" value="{{name}}" name="name">
-             <input type="hidden" value="{{id}}" name="app_id">
-             <input type="submit" class="btn btn-primary" value="DELETE GAME">
-           </form>
-         </div>
-       </div>
-     </div>
-   </div>
- {{/each}}
-</div>
-{{/if}}
-</body>
+{{/if}} <!-- /if verified -->
