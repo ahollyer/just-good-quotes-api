@@ -12,6 +12,7 @@
     "express": "^4.15.3",
     "express-session": "^1.15.4",
     "hbs": "^4.0.1",
+    "nodemailer": "^4.0.1",
     "nodemon": "^1.11.0",
     "pbkdf2": "^3.0.12",
     "pg-promise": "^6.3.5"
