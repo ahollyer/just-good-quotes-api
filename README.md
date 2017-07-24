@@ -1,4 +1,4 @@
-# Just Good Quotes
+# Uplifting Quotes
 ## A simple API serving up only good quotes, as judged by yours truly.
 
 ### [Aspen Hollyer](http://www.aspenhollyer.com)'s submission to [DigitalCrafts](http://www.DigitalCrafts.com)' individual project week.
