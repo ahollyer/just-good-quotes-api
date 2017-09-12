@@ -1,3 +1,8 @@
+{{#if justVerified}}
+<div class="col s10 offset-s1 pink lighten-5" style="border:1px solid pink">
+  <p class="light pink">Thank you! Your account has been verified.</p>
+</div>
+{{/if}}
 <!--***********************************************************************
                             Account Details
 ************************************************************************-->
@@ -10,6 +15,9 @@
         <br />
         <strong>Password:</strong> <a class="pink-text text-lighten-2" href="/changepass/{{account.verify_key}}">change password</a></p>
         <p>You have {{numKeys}} active app(s). Remember to change your API keys frequently for security.</p>
+        <br />
+        <a href="/dev/logout" class="btn btn-waves btn-waves-light pink  lighten-2">logout</a>
+        <br /><br />
     </div>
   </div><!-- .row -->
 </div><!-- .container -->
@@ -20,8 +28,8 @@
                         Verify Account Notification
   ************************************************************************-->
   <div class="col s10 offset-s1 light">
-    To proceed, please check your inbox and verify your account.
-    <a href="/resend/?key={{account.verify_key}}&id={{account.id}}">Resend verification email</a>
+    Only verified users may access the API. To proceed, please check your inbox and verify your account.
+    <a href="/resend/?key={{account.verify_key}}&id={{account.id}}" class="pink-text text-lighten-2">Resend verification email</a>
   </div>
   {{/unless}}
 
@@ -31,13 +39,16 @@
   ************************************************************************-->
     <div class="row z-depth-2">
       <h4 class="center pink-text text-lighten-2 pink lighten-5">Manage My Apps</h4>
+      {{#unless apps}}
+      <p class="center light">You don't have any apps yet! Create one below. For help, check out the <a href="/dev/guide" class="pink-text text-lighten-2">Getting Started</a> page.</p>
+      {{/unless}}
       {{#each apps}}
         {{#if active}}
           <div class="col s10 offset-s1 z-depth-1 light" style="margin-bottom:10px;">
             <!-- TODO: Add name/url change form -->
             <a href="#" class="right pink-text text-lighten-2" style="margin-top:10px;"><i class="material-icons">edit</i></a>
             <p id="adminName"><strong>Project Name:</strong> {{name}}</p>
-            <p><strong>URL:</strong> <a href="{{url}}">{{url}}</a></p>
+            <p><strong>URL:</strong> <a href="{{url}}" target="_blank" class="pink-text text-lighten-2">{{url}}</a></p>
 
             {{#if key_present}}
               <p><strong>API Key:</strong> {{api_key}}</p>
@@ -47,8 +58,8 @@
             {{/if}}
 
             <form class="center" method="POST" name="new_api">
-              <input type="hidden" name="api_key_generate" value="true">
-              <input type="hidden" name="app_id" value="{{id}}">
+              <input type="hidden" name="apiKeyGenerate" value="true">
+              <input type="hidden" name="appId" value="{{id}}">
               <input type="submit" class="btn waves-effect waves-light cyan" value="Generate New API key">
               <button type="button" class="btn waves-effect waves-light pink" data-toggle="modal" data-target="delete{{id}}">Delete This App</button>
               <br /><br />
@@ -74,7 +85,7 @@
         <label for="appUrl">URL (optional)</label>
         <input id="appUrl" type="url" name="appUrl">
       </div>
-      <input type="hidden" value="{{id}}" name="app_id">
+      <input type="hidden" value="{{id}}" name="appId">
       <div class="input-field center">
         <input type="submit" class="btn waves-effect waves-light pink lighten-2" value="create app">
         <br /><br />
@@ -93,7 +104,7 @@
       <p>You are about to delete all API permissions for <strong>{{name}}</strong>. Are you sure?</p>
         <form class="center" method="POST" name="deleteApp">
           <input type="hidden" name="deleteApp" value="true">
-          <input type="hidden" value="{{id}}" name="app_id">
+          <input type="hidden" value="{{id}}" name="appId">
           <input type="submit" class="btn pink waves-effect waves-light" value="I understand - delete this app">
         </form>
     </div>

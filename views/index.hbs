@@ -139,10 +139,11 @@
 <!--***********************************************************************
                                 Scripts
 ************************************************************************-->
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/static/js/axios.min.js"></script>
+<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 <script>
   // Fetch quotes for parallax dividers
-  axios.get('/api/KEY?random=true&numQuotes=3')
+  axios.get('/api/smSlEZW0LVWGZDdgJsh175aEZOfVGEWZNjgCYnrz96VMTzCBbL?random=true&numQuotes=3')
     .then(function(response){
       let q = response.data;
       document.getElementById("quote1").innerHTML = `"${q[0].text}" - ${q[0].author}`;
@@ -157,7 +158,7 @@
   function getQuote() {
     document.getElementById("quote1").innerHTML = "<i class='fa-li fa fa-spinner fa-spin'></i>";
 
-    axios.get('/api/KEY?random=true')
+    axios.get('/api/smSlEZW0LVWGZDdgJsh175aEZOfVGEWZNjgCYnrz96VMTzCBbL?random=true')
       .then(function(response){
         let q = response.data;
         document.getElementById("quote1").innerHTML = `"${q[0].text}" - ${q[0].author}`;
